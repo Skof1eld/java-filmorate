@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-
 import java.util.*;
 
 /**
@@ -16,7 +15,6 @@ import java.util.*;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-
     private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
@@ -43,6 +41,18 @@ public class UserController {
         }
 
         User oldUser = users.get(newUser.getId());
+        validateUser(oldUser, newUser);
+
+        // Если имя пустое, используем логин
+        if (oldUser.getName() == null || oldUser.getName().isBlank()) {
+            oldUser.setName(oldUser.getLogin());
+        }
+
+        log.info("Данные пользователя обновлены: {}", oldUser);
+        return oldUser;
+    }
+
+    public void validateUser(User oldUser, User newUser) {
         if (newUser.getEmail() != null && !newUser.getEmail().equals(oldUser.getEmail())) {
             oldUser.setEmail(newUser.getEmail());
         }
@@ -58,9 +68,6 @@ public class UserController {
         if (newUser.getBirthday() != null && !newUser.getBirthday().equals(oldUser.getBirthday())) {
             oldUser.setBirthday(newUser.getBirthday());
         }
-
-        log.info("Данные пользователя обновлены: {}", oldUser);
-        return oldUser; // Возвращаем обновленного пользователя
     }
 
     private long getNextId() {

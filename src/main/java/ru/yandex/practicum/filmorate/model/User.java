@@ -20,14 +20,8 @@ public class User {
     @Pattern(regexp = "\\S+", message = "Логин не может содержать пробелы")
     private String login;
 
-
     private String name;
 
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
-
-    // Если имя пустое, используем логин
-    public String getName() {
-        return (name == null || name.isBlank()) ? login : name;
-    }
 }

@@ -22,9 +22,7 @@ import java.util.*;
 @Slf4j
 public class FilmController {
     private final Map<Long, Film> films = new HashMap<>();
-
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -48,7 +46,15 @@ public class FilmController {
         if (!films.containsKey(newFilm.getId())) {
             throw new ValidationException("Такой фильм не найден");
         }
+
         Film oldFilm = films.get(newFilm.getId());
+        validateFilm(oldFilm, newFilm);
+
+        log.info("Обновлен фильм: {}", oldFilm);
+        return oldFilm;
+    }
+
+    public void validateFilm(Film oldFilm, Film newFilm) {
         if (newFilm.getName() != null && !newFilm.getName().equals(oldFilm.getName())) {
             oldFilm.setName(newFilm.getName());
         }
@@ -64,9 +70,6 @@ public class FilmController {
         if (newFilm.getDuration() > 0 && newFilm.getDuration() != oldFilm.getDuration()) {
             oldFilm.setDuration(newFilm.getDuration());
         }
-
-        log.info("Обновлен фильм: {}", oldFilm);
-        return oldFilm;
     }
 
     private long getNextId() {
