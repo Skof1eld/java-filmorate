@@ -18,7 +18,7 @@ class FilmorateApplicationTests {
     private TestRestTemplate restTemplate;
 
     /**
-     * проверка, что фильм создается успешно
+     * Проверка, что фильм создается успешно
      */
     @Test
     void shouldCreateFilmSuccessfully() {

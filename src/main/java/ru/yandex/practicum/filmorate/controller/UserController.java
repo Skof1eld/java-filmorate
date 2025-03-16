@@ -24,9 +24,7 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        setUsuallyName(user);
         user.setId(getNextId());
         users.put(user.getId(), user);
         log.info("Пользователь добавлен: {}", user);
@@ -42,14 +40,19 @@ public class UserController {
 
         User oldUser = users.get(newUser.getId());
         validateUser(oldUser, newUser);
-
-        // Если имя пустое, используем логин
-        if (oldUser.getName() == null || oldUser.getName().isBlank()) {
-            oldUser.setName(oldUser.getLogin());
-        }
+        setUsuallyName(oldUser);
 
         log.info("Данные пользователя обновлены: {}", oldUser);
         return oldUser;
+    }
+
+    /**
+     * Если имя пустое, используем логин
+     */
+    private void setUsuallyName(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 
     public void validateUser(User oldUser, User newUser) {

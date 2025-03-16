@@ -1,14 +1,26 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 public class FilmValidationTest {
-    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private static Validator validator;
+
+    @BeforeAll
+    static void setUp() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
 
     /**
      * Проверка на пустое название
@@ -20,7 +32,8 @@ public class FilmValidationTest {
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(100);
 
-        assertTrue(film.getName().isBlank());
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertThat(violations).isNotEmpty();
     }
 
     /**
@@ -34,7 +47,8 @@ public class FilmValidationTest {
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(100);
 
-        assertTrue(film.getDescription().length() > 200);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertThat(violations).isNotEmpty();
     }
 
     /**
@@ -48,7 +62,8 @@ public class FilmValidationTest {
         film.setReleaseDate(LocalDate.of(1800, 1, 1));
         film.setDuration(100);
 
-        assertTrue(film.getReleaseDate().isBefore(MIN_RELEASE_DATE));
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertThat(violations).isNotEmpty();
     }
 
     /**
@@ -60,8 +75,9 @@ public class FilmValidationTest {
         film.setName("Valid Name");
         film.setDescription("Valid Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(-10); // Отрицательная длительность
+        film.setDuration(-10);
 
-        assertTrue(film.getDuration() <= 0);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertThat(violations).isNotEmpty();
     }
 }

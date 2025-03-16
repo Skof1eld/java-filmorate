@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.validation.CheckReleaseDate;
 
 import java.time.LocalDate;
 
@@ -19,7 +20,7 @@ public class Film {
     private String description;
 
     @NotNull(message = "Дата релиза не может быть пустой")
-    @PastOrPresent(message = "Дата релиза должна быть не раньше 28 декабря 1895 года")
+    @CheckReleaseDate
     private LocalDate releaseDate;
 
     @Positive(message = "Продолжительность фильма должна быть положительным числом")

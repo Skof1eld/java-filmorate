@@ -1,13 +1,27 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest {
+    private static Validator validator;
+
+    @BeforeAll
+    static void setUp() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
 
     /**
      * Email должен содержать '@'
@@ -15,11 +29,12 @@ public class UserValidationTest {
     @Test
     void emailMustContainAtSymbol() {
         User user = new User();
-        user.setEmail("incorrect-email"); // Неверный email
+        user.setEmail("incorrect-email");
         user.setLogin("TestLogin");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
-        assertFalse(user.getEmail().contains("@"));
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertThat(violations).isNotEmpty();
     }
 
     /**
@@ -32,7 +47,8 @@ public class UserValidationTest {
         user.setLogin(" ");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
-        assertTrue(user.getLogin().isBlank());
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertThat(violations).isNotEmpty();
     }
 
     /**
@@ -63,6 +79,7 @@ public class UserValidationTest {
         user.setLogin("LoginTest");
         user.setBirthday(LocalDate.now().plusDays(1));
 
-        assertTrue(user.getBirthday().isAfter(LocalDate.now()));
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertThat(violations).isNotEmpty();
     }
 }
