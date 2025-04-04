@@ -82,4 +82,33 @@ public class UserValidationTest {
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertThat(violations).isNotEmpty();
     }
+
+    /**
+     * Проверка, что друзья изначально пусты
+     */
+    @Test
+    void newUsersFriendListIsEmpty() {
+        User user = new User();
+        user.setEmail("test@gmail.com");
+        user.setLogin("TestUser");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
+
+        assertThat(user.getFriends()).isEmpty();
+    }
+
+    /**
+     * Проверка добавления друзей
+     */
+    @Test
+    void checksTheAddingFriends() {
+        User user = new User();
+        user.setEmail("test@gmail.com");
+        user.setLogin("TestUser");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
+
+        user.getFriends().add(1L);
+        user.getFriends().add(2L);
+
+        assertThat(user.getFriends()).hasSize(2).contains(1L, 2L);
+    }
 }
