@@ -12,34 +12,34 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(final ValidationException e) {
         return Map.of("Ошибка", e.getMessage());
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final NotFoundException e) {
         return Map.of("Ошибка", e.getMessage());
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleConstraintViolationException(final ConstraintViolationException e) {
-        return Map.of("Ошибка", "Ошибка валидации: " + e.getMessage());
+        return Map.of("Ошибка", String.format("Ошибка валидации: %s", e.getMessage()));
     }
 
-    @ExceptionHandler(Throwable.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleThrowable(final Throwable e) {
-        return Map.of("Ошибка", "Произошла непредвиденная ошибка: " + e.getMessage());
+        return Map.of("Ошибка", String.format("Произошла непредвиденная ошибка: %s", e.getMessage()));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return Map.of("Ошибка", "Ошибка валидации: " + e.getBindingResult().getAllErrors()
-                .getFirst().getDefaultMessage());
+        String message = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
+        return Map.of("Ошибка", String.format("Ошибка валидации: %s", message));
     }
 }
