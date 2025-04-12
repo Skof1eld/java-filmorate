@@ -10,8 +10,8 @@
 В таблице genres запись 
 -  name varchar – это жанр: комедия, боевик и т.д
 
-Таблица film_genres является связующей для таблиц films и genres
+Таблица film_genre является связующей для таблиц films и genre
 
 Таблица likes является связующей для таблиц users и films   
 
-![bd_shema.png](bd_shema.png)
+![BD_sheme.png](BD_sheme.png)
