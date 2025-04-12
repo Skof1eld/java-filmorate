@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Класс представляет пользователя в системе FilmoRate.
@@ -17,11 +19,13 @@ public class User {
     private String email;
 
     @NotBlank(message = "Логин не может быть пустым")
-    @Pattern(regexp = "\\S+", message = "Логин не может содержать пробелы")
+    @Size(min = 1, message = "Логин не может быть пустым или состоять только из пробелов")
     private String login;
 
     private String name;
 
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
+
+    private final Set<Long> friends = new HashSet<>();
 }

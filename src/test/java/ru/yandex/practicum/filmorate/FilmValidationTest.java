@@ -80,4 +80,29 @@ public class FilmValidationTest {
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertThat(violations).isNotEmpty();
     }
+
+    @Test
+    void checksTthePossibilityAddingLikesAndTheirStorage() {
+        Film film = new Film();
+        film.setName("Valid Name");
+        film.setDescription("Valid Description");
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
+        film.setDuration(100);
+
+        film.getLikes().add(1L);
+        film.getLikes().add(2L);
+
+        assertThat(film.getLikes()).hasSize(2).contains(1L, 2L);
+    }
+
+    @Test
+    void checksThatTheNewMovieHasNoLikes() {
+        Film film = new Film();
+        film.setName("Valid Name");
+        film.setDescription("Valid Description");
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
+        film.setDuration(100);
+
+        assertThat(film.getLikes()).isEmpty();
+    }
 }

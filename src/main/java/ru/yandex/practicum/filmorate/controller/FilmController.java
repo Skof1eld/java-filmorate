@@ -1,15 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.*;
 
@@ -19,59 +15,50 @@ import java.util.*;
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
-    private final Map<Long, Film> films = new HashMap<>();
+    private final FilmService filmService;
 
     @GetMapping
     public Collection<Film> findAll() {
-        return films.values();
+        log.info("Получен запрос на список всех фильмов");
+        return filmService.findAll();
     }
 
     @PostMapping
-    public Film createFilm(@Valid @RequestBody Film film) {
-        film.setId(getNextId());
-        films.put(film.getId(), film);
-        log.info("Фильм добавлен: {}", film);
-        return film;
+    public Film create(@Valid @RequestBody Film film) {
+        log.info("Создание фильма: {}", film);
+        return filmService.create(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film newFilm) {
-        if (!films.containsKey(newFilm.getId())) {
-            throw new ValidationException("Такой фильм не найден");
-        }
-
-        Film oldFilm = films.get(newFilm.getId());
-        validateFilm(oldFilm, newFilm);
-
-        log.info("Обновлен фильм: {}", oldFilm);
-        return oldFilm;
+    public Film update(@Valid @RequestBody Film film) {
+        log.info("Обновление фильма: {}", film);
+        return filmService.update(film);
     }
 
-    public void validateFilm(Film oldFilm, Film newFilm) {
-        if (newFilm.getName() != null && !newFilm.getName().equals(oldFilm.getName())) {
-            oldFilm.setName(newFilm.getName());
-        }
-
-        if (newFilm.getDescription() != null && !newFilm.getDescription().equals(oldFilm.getDescription())) {
-            oldFilm.setDescription(newFilm.getDescription());
-        }
-
-        if (newFilm.getReleaseDate() != null && !newFilm.getReleaseDate().equals(oldFilm.getReleaseDate())) {
-            oldFilm.setReleaseDate(newFilm.getReleaseDate());
-        }
-
-        if (newFilm.getDuration() > 0 && newFilm.getDuration() != oldFilm.getDuration()) {
-            oldFilm.setDuration(newFilm.getDuration());
-        }
+    @GetMapping("/{id}")
+    public Film getById(@PathVariable long id) {
+        log.info("Получение фильма с ID: {}", id);
+        return filmService.getById(id);
     }
 
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/{id}/like/{userId}")
+    public Map<String, String> addLike(@PathVariable long id, @PathVariable long userId) {
+        log.info("Пользователь {} ставит лайк фильму {}", userId, id);
+        filmService.addLike(id, userId);
+        return Map.of("message", String.format("Лайк успешно добавлен пользователем %d для фильма %d", userId, id));
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeLike(@PathVariable long id, @PathVariable long userId) {
+        log.info("Пользователь {} убирает лайк с фильма {}", userId, id);
+        filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Получение популярных фильмов, количество: {}", count);
+        return filmService.getPopularFilms(count);
     }
 }
