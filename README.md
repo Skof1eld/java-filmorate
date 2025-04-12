@@ -16,3 +16,4 @@ ___
 Таблица likes является связующей для таблиц users и films   
 
 ![bd_sheme_new.png](bd_sheme_new.png)
+
