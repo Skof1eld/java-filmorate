@@ -18,17 +18,17 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        user.setId(idCounter++);
-        users.put(user.getId(), user);
+        user.setUser_id(idCounter++);
+        users.put(user.getUser_id(), user);
         return user;
     }
 
     @Override
     public User update(User user) {
-        if (!users.containsKey(user.getId())) {
+        if (!users.containsKey(user.getUser_id())) {
             throw new NotFoundException("Пользователь не найден");
         }
-        users.put(user.getId(), user);
+        users.put(user.getUser_id(), user);
         return user;
     }
 

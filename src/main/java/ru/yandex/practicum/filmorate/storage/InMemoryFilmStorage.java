@@ -22,17 +22,17 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
-        film.setId(idCounter++);
-        films.put(film.getId(), film);
+        film.setFilm_id(idCounter++);
+        films.put(film.getFilm_id(), film);
         return film;
     }
 
     @Override
     public Film update(Film film) {
-        if (!films.containsKey(film.getId())) {
+        if (!films.containsKey(film.getFilm_id())) {
             throw new NotFoundException("Фильм не найден");
         }
-        films.put(film.getId(), film);
+        films.put(film.getFilm_id(), film);
         return film;
     }
 
