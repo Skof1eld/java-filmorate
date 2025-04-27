@@ -30,7 +30,7 @@ public class FilmValidationTest {
         Film film = new Film();
         film.setName("");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(100);
+        film.setDuration(100L);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertThat(violations).isNotEmpty();
@@ -45,7 +45,7 @@ public class FilmValidationTest {
         film.setName("Name");
         film.setDescription("A".repeat(201));
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(100);
+        film.setDuration(100L);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertThat(violations).isNotEmpty();
@@ -60,7 +60,7 @@ public class FilmValidationTest {
         film.setName("Valid Name");
         film.setDescription("Valid Description");
         film.setReleaseDate(LocalDate.of(1800, 1, 1));
-        film.setDuration(100);
+        film.setDuration(100L);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertThat(violations).isNotEmpty();
@@ -75,7 +75,7 @@ public class FilmValidationTest {
         film.setName("Valid Name");
         film.setDescription("Valid Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(-10);
+        film.setDuration(-10L);
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertThat(violations).isNotEmpty();
@@ -87,7 +87,7 @@ public class FilmValidationTest {
         film.setName("Valid Name");
         film.setDescription("Valid Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(100);
+        film.setDuration(100L);
 
         film.getLikes().add(1L);
         film.getLikes().add(2L);
@@ -101,7 +101,7 @@ public class FilmValidationTest {
         film.setName("Valid Name");
         film.setDescription("Valid Description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(100);
+        film.setDuration(100L);
 
         assertThat(film.getLikes()).isEmpty();
     }
