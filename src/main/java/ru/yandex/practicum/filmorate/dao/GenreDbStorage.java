@@ -49,4 +49,19 @@ public class GenreDbStorage implements GenreStorage {
                 filmById.keySet().toArray(),
                 (rs, rowNum) -> filmById.get(rs.getLong("film_id")).getGenres().add(makeGenre(rs)));
     }
+
+    @Override
+    public List<Genre> findGenresByIdList(List<Long> idList) {
+        if (idList == null || idList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String sqlParam = idList.stream()
+                .map(id -> "?")
+                .collect(Collectors.joining(","));
+
+        String sql = "SELECT * FROM genres WHERE genre_id IN (" + sqlParam + ")";
+
+        return jdbcTemplate.query(sql, idList.toArray(), (rs, rowNum) -> makeGenre(rs));
+    }
 }

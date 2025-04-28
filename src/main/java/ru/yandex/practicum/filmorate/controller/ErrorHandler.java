@@ -17,49 +17,49 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(FilmNotFoundException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
         log.info(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
         log.info(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
         log.info(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(GenreNotFoundException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleGenreNotFoundException(final GenreNotFoundException e) {
         log.info(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(MpaNotFoundException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
         log.info(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final MethodArgumentNotValidException e) {
         log.info(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(Throwable.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
         log.error(e.getMessage(), e);

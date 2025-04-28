@@ -64,7 +64,6 @@ public class FilmService {
     }
 
     private void validateFilmMpaAndGenres(Film film) {
-
         if (film.getMpa() == null) {
             throw new ValidationException("Рейтинг-Mpa обязателен для фильма");
         }
@@ -72,10 +71,15 @@ public class FilmService {
         mpaStorage.findMpaById(film.getMpa().getId())
                 .orElseThrow(() -> new MpaNotFoundException("Рейтинг-MPA не найден"));
 
-        if (film.getGenres() != null) {
-            for (Genre genre : film.getGenres()) {
-                genreStorage.findGenreById(genre.getId())
-                        .orElseThrow(() -> new GenreNotFoundException("Жанр не найден"));
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            List<Long> idGenre = film.getGenres().stream()
+                    .map(Genre::getId)
+                    .toList();
+
+            List<Genre> genreFound = genreStorage.findGenresByIdList(idGenre);
+
+            if (genreFound.size() != idGenre.size()) {
+                throw new GenreNotFoundException("Один или несколько жанров не найдены!");
             }
         }
     }
