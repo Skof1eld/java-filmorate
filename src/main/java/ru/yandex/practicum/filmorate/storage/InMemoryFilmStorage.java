@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.InvalidFilmDurationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -13,14 +14,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     private long idCounter = 1;
 
     @Override
-    public Collection<Film> findAll() {
-        return films.values();
+    public List<Film> findAllFilms() {
+        return new ArrayList<>(films.values());
     }
 
     @Override
     public Film create(Film film) {
         if (film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительной");
+            throw new InvalidFilmDurationException("Продолжительность фильма должна быть положительной");
         }
         film.setId(idCounter++);
         films.put(film.getId(), film);
@@ -30,14 +31,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
         if (!films.containsKey(film.getId())) {
-            throw new NotFoundException("Фильм не найден");
+            throw new FilmNotFoundException("Фильм не найден");
         }
         films.put(film.getId(), film);
         return film;
     }
 
     @Override
-    public Film getById(long id) {
-        return films.get(id);
+    public Optional<Film> findFilmById(Long id) {
+        return Optional.ofNullable(films.get(id));
+    }
+
+    @Override
+    public List<Film> findPopular(Long count) {
+        return films.values().stream()
+                .sorted((film1, film2) -> Integer.compare(film2.getLikes().size(), film1.getLikes().size()))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }
